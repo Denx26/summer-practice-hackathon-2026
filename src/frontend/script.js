@@ -33,11 +33,11 @@ document.getElementById('reg-desc').addEventListener('input', (e) => {
     clearTimeout(bioTimer);
     const val = e.target.value.trim();
     if (val.length < 15) return;
-    
+
     bioTimer = setTimeout(async () => {
         const scanningIcon = document.getElementById('ai-scanning');
         if (scanningIcon) scanningIcon.style.display = 'flex';
-        
+
         try {
             const res = await fetch(`${API}/ai/extract-sports?description=${encodeURIComponent(val)}`, { method: 'POST' });
             const data = await res.json();
@@ -52,7 +52,7 @@ document.getElementById('reg-desc').addEventListener('input', (e) => {
                 });
                 showToast(`🤖 AI Found: ${data.sports}`);
             }
-        } catch (e) {}
+        } catch (e) { }
         if (scanningIcon) scanningIcon.style.display = 'none';
     }, 1500);
 });
@@ -105,13 +105,13 @@ document.getElementById('btn-no').addEventListener('click', () => updateAvail(0)
 async function updateAvail(val) {
     const box = document.getElementById('avail-status-box');
     const btns = document.getElementById('showup-btns');
-    
+
     try {
         if (currentUser?.id) {
             await fetch(`${API}/availability/${currentUser.id}?available=${val}`, { method: 'POST' });
         }
-    } catch (e) {}
-    
+    } catch (e) { }
+
     box.textContent = val ? '✅ You are IN today! Get ready.' : '😴 Not today. Resting.';
     box.style.display = 'block';
     btns.style.display = 'none';
@@ -124,7 +124,11 @@ async function doSearch() {
     if (!sport) return;
 
     const container = document.getElementById('match-results');
-    container.innerHTML = '<p class="text-slate-400 text-center">Searching...</p>';
+    container.innerHTML = `
+    <div class="flex flex-col items-center py-10 text-slate-400">
+        <i class="fa-solid fa-spinner fa-spin text-3xl text-green-500 mb-4"></i>
+        <p class="font-bold tracking-wide">Searching players...</p>
+    </div>`;
 
     try {
         const res = await fetch(`${API}/match/${sport}`, { method: 'POST' });
@@ -156,10 +160,10 @@ async function doSearch() {
 
 async function checkCompat(targetName, targetDesc, btn) {
     if (!currentUser?.id) return showToast("Register first to use AI!", "red");
-    
+
     const infoDiv = btn.nextElementSibling;
     btn.textContent = "ANALYZING...";
-    
+
     try {
         const res = await fetch(`${API}/ai/compatibility`, {
             method: 'POST',
@@ -222,7 +226,15 @@ document.getElementById('btn-logout').addEventListener('click', () => {
 document.addEventListener('keydown', async (e) => {
     if (e.ctrlKey && e.key === 'r') {
         e.preventDefault();
-        const res = await fetch(`${API}/debug/reset`, {method: 'POST'});
-        if(res.ok) { localStorage.clear(); alert("DB SEEDED"); location.reload(); }
+        const res = await fetch(`${API}/debug/reset`, { method: 'POST' });
+        if (res.ok) { localStorage.clear(); alert("DB SEEDED"); location.reload(); }
     }
+});
+
+document.getElementById('sport-search').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') doSearch();
+});
+
+document.getElementById('chat-input').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendChat();
 });
