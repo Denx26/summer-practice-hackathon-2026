@@ -4,8 +4,68 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShowUp2Move</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    
+<body class="bg-gray-900 text-white min-h-screen p-8">
+
+    <h1 class="text-4xl font-bold text-center text-green-400 mb-8">ShowUp2Move</h1>
+
+    <!-- Register -->
+    <div class="max-w-md mx-auto bg-gray-800 p-6 rounded-xl mb-6">
+        <h2 class="text-xl font-bold mb-4">Join & Play</h2>
+        <input id="name" placeholder="Your name" class="w-full p-2 mb-3 rounded bg-gray-700">
+        <input id="description" placeholder="Describe yourself" class="w-full p-2 mb-3 rounded bg-gray-700">
+        <input id="sports" placeholder="Sports (football,tennis)" class="w-full p-2 mb-3 rounded bg-gray-700">
+        <button onclick="registerUser()" class="w-full bg-green-500 hover:bg-green-600 p-2 rounded font-bold">Register</button>
+    </div>
+
+    <!-- ShowUpToday -->
+    <div class="max-w-md mx-auto bg-gray-800 p-6 rounded-xl mb-6">
+        <h2 class="text-xl font-bold mb-4">ShowUpToday?</h2>
+        <input id="userId" placeholder="Your user ID" class="w-full p-2 mb-3 rounded bg-gray-700">
+        <div class="flex gap-3">
+            <button onclick="setAvailability(true)" class="flex-1 bg-green-500 p-2 rounded font-bold hover:bg-green-600">Yes, I'm in!</button>
+            <button onclick="setAvailability(false)" class="flex-1 bg-red-500 p-2 rounded font-bold hover:bg-red-600">Not today</button>
+        </div>
+    </div>
+
+    <!-- Find Match -->
+    <div class="max-w-md mx-auto bg-gray-800 p-6 rounded-xl mb-6">
+        <h2 class="text-xl font-bold mb-4">Find Players</h2>
+        <input id="sportSearch" placeholder="Sport (e.g. football)" class="w-full p-2 mb-3 rounded bg-gray-700">
+        <button onclick="findMatch()" class="w-full bg-blue-500 hover:bg-blue-600 p-2 rounded font-bold">Find Match</button>
+        <div id="results" class="mt-4"></div>
+    </div>
+
+<script>
+const API = "http://127.0.0.1:8001";
+
+async function registerUser() {
+    const name = document.getElementById("name").value;
+    const description = document.getElementById("description").value;
+    const sports = document.getElementById("sports").value.split(",");
+    const res = await fetch(`${API}/users`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({name, description, sports, skill_level: "intermediate"})
+    });
+    const data = await res.json();
+    alert(`Registered! Your ID is: ${data.id}`);
+}
+
+async function setAvailability(available) {
+    const userId = document.getElementById("userId").value;
+    await fetch(`${API}/availability/${userId}?available=${available}`, {method: "POST"});
+    alert(available ? "You're in for today!" : "Maybe next time!");
+}
+
+async function findMatch() {
+    const sport = document.getElementById("sportSearch").value;
+    const res = await fetch(`${API}/match/${sport}`, {method: "POST"});
+    const users = await res.json();
+    const div = document.getElementById("results");
+    div.innerHTML = users.length ? users.map(u => `<div class="bg-gray-700 p-3 rounded mb-2">${u.name} - ${u.sports}</div>`).join("") : "<p>No players found</p>";
+}
+</script>
 </body>
 </html>
