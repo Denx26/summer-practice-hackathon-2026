@@ -1,132 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShowUp2Move | Dashboard</title>
+    <title>ShowUp2Move | Join the Movement</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="script.js" defer></script>
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="../style/style.css">
     <style>
-        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans selection:bg-green-500/30">
 
-    <nav class="border-b border-slate-800 p-4 sticky top-0 z-40 glass">
-        <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <div class="bg-green-500 p-2 rounded-lg"><i class="fa-solid fa-bolt text-black"></i></div>
-                <span class="text-xl font-black tracking-tighter uppercase italic text-green-400">ShowUp2Move</span>
+<body class="bg-slate-950 text-slate-100">
+
+    <div id="landingView">
+        <div class="blob top-0 -left-20"></div>
+        <div class="blob bottom-0 -right-20 bg-blue-600"></div>
+
+        <nav class="p-6 flex justify-between items-center max-w-7xl mx-auto">
+            <div class="text-2xl font-black italic text-green-400">S2M.</div>
+            <button onclick="goToDashboard()"
+                class="bg-white text-black px-6 py-2 rounded-full font-bold hover:bg-green-400 transition">Dashboard <i
+                    class="fa-solid fa-arrow-right ml-2"></i></button>
+        </nav>
+
+        <section class="h-[80vh] flex flex-col justify-center items-center text-center px-4">
+            <h1 class="text-6xl md:text-9xl hero-font uppercase mb-4 animate-pulse" data-aos="zoom-in">Don't just stay.
+                <br> <span class="text-green-500">Show up & move.</span></h1>
+            <p class="text-slate-400 text-lg md:text-2xl max-w-2xl mb-8" data-aos="fade-up" data-aos-delay="200">
+                The smart social matching platform for spontaneous sports. Find your crew in seconds.
+            </p>
+            <div class="flex gap-4" data-aos="fade-up" data-aos-delay="400">
+                <button onclick="goToDashboard()"
+                    class="bg-green-500 text-slate-950 text-xl px-10 py-4 rounded-2xl font-black hover:scale-110 transition shadow-[0_0_50px_-12px_rgba(34,197,94,0.5)]">JOIN
+                    THE MOVEMENT</button>
             </div>
-            <div id="connectionStatus" class="text-xs bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
-                <span class="w-2 h-2 bg-green-500 inline-block rounded-full mr-2"></span> Backend Connected
+        </section>
+
+        <section class="max-w-6xl mx-auto py-20 px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="glass p-8 rounded-3xl text-center stat-card" data-aos="fade-up">
+                <div class="text-5xl font-black text-green-400 mb-2">1,240</div>
+                <div class="text-slate-400 uppercase tracking-widest text-xs">Players Nearby</div>
             </div>
-        </div>
-    </nav>
-
-    <main class="max-w-6xl mx-auto p-4 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        <div class="lg:col-span-4 space-y-6" data-aos="fade-right">
-            <section class="glass p-6 rounded-3xl shadow-xl">
-                <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-user-plus text-green-400"></i> Join the Movement
-                </h2>
-                <div class="space-y-4">
-                    <div>
-                        <label class="text-xs text-slate-400 uppercase font-bold px-1">Full Name</label>
-                        <input id="name" type="text" placeholder="Denis Gabor" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl focus:border-green-500 outline-none transition-all">
-                    </div>
-                    <div>
-                        <label class="text-xs text-slate-400 uppercase font-bold px-1">Bio / Description</label>
-                        <textarea id="description" rows="2" placeholder="Tell us about yourself..." class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl focus:border-green-500 outline-none transition-all"></textarea>
-                    </div>
-                    <div class="relative">
-                        <label class="text-xs text-slate-400 uppercase font-bold px-1">Sports Preferences</label>
-                        <input id="sports" type="text" placeholder="football, tennis, gym" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl focus:border-green-500 outline-none transition-all pr-12">
-                        <button onclick="magicAI()" title="Magic AI Extraction" class="absolute right-2 top-8 text-green-400 hover:text-white p-2 transition-colors">
-                            <i class="fa-solid fa-wand-sparkles animate-pulse"></i>
-                        </button>
-                    </div>
-                    <button onclick="registerUser()" class="w-full bg-green-500 hover:bg-green-400 text-slate-950 font-black p-4 rounded-xl transition-all hover:scale-[1.02] active:scale-95 shadow-lg shadow-green-500/20">
-                        CREATE PROFILE
-                    </button>
-                </div>
-            </section>
-
-            <section class="glass p-6 rounded-3xl shadow-xl border-l-4 border-green-500">
-                <div class="flex justify-between items-start mb-4">
-                    <h2 class="text-lg font-bold italic uppercase">ShowUpToday?</h2>
-                    <span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 rounded font-bold uppercase tracking-widest">LIVE STATUS</span>
-                </div>
-                <input id="userId" type="text" placeholder="Enter your ID" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl mb-4 text-center font-mono text-green-400">
-                <div class="flex gap-3">
-                    <button onclick="setAvailability(true)" class="flex-1 bg-slate-100 text-slate-900 font-bold p-3 rounded-xl hover:bg-green-400 transition-all active:scale-90 flex flex-col items-center">
-                        <i class="fa-solid fa-check mb-1"></i> I'm In
-                    </button>
-                    <button onclick="setAvailability(false)" class="flex-1 bg-slate-800 text-slate-400 font-bold p-3 rounded-xl hover:bg-red-500 hover:text-white transition-all active:scale-90 flex flex-col items-center">
-                        <i class="fa-solid fa-xmark mb-1"></i> Not Now
-                    </button>
-                </div>
-            </section>
-        </div>
-
-        <div class="lg:col-span-8 space-y-6" data-aos="fade-left">
-            <section class="glass p-8 rounded-3xl shadow-xl min-h-[500px]">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                    <div>
-                        <h2 class="text-2xl font-black italic">DISCOVER PLAYERS</h2>
-                        <p class="text-slate-400 text-sm">Find compatible groups based on your sports</p>
-                    </div>
-                    <div class="flex gap-2 bg-slate-900 p-1 rounded-2xl border border-slate-700">
-                        <input id="sportSearch" type="text" placeholder="Search sport..." class="bg-transparent px-4 py-2 outline-none w-full md:w-48 text-sm">
-                        <button onclick="findMatch()" class="bg-green-500 text-slate-950 px-6 py-2 rounded-xl font-bold hover:bg-green-400 transition-all">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div id="results" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="col-span-full flex flex-col items-center justify-center py-20 text-slate-600">
-                        <i class="fa-solid fa-people-group text-6xl mb-4 opacity-20"></i>
-                        <p>Search for a sport to see who's ready to move!</p>
-                    </div>
-                </div>
-            </section>
-        </div>
-    </main>
-
-    <div id="chatPopup" class="fixed bottom-24 right-6 w-80 md:w-96 bg-slate-800 border border-slate-700 rounded-3xl shadow-2xl hidden z-50 overflow-hidden flex flex-col transform transition-all duration-300 scale-90">
-        <div class="bg-green-500 p-4 font-black text-slate-900 flex justify-between items-center italic">
-            <span><i class="fa-solid fa-robot mr-2"></i> SPORTS AI ASSISTANT</span>
-            <button id="closeChat" class="text-slate-950 hover:opacity-50 text-2xl">×</button>
-        </div>
-        <div id="chatDisplay" class="h-80 overflow-y-auto p-4 space-y-4 text-sm bg-slate-900/50">
-            <div class="bg-slate-800 p-3 rounded-2xl rounded-tl-none border border-slate-700 text-slate-300">
-                Hi! you can ask me all you need about any sport.
+            <div class="glass p-8 rounded-3xl text-center stat-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="text-5xl font-black text-blue-400 mb-2">84</div>
+                <div class="text-slate-400 uppercase tracking-widest text-xs">Matches Today</div>
             </div>
-        </div>
-        <div class="p-3 border-t border-slate-800 bg-slate-800 flex gap-2">
-            <input type="text" id="userInput" placeholder="Ask anything..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-green-500">
-            <button onclick="sendChat()" class="bg-green-500 text-slate-950 p-3 rounded-xl hover:bg-green-400 transition shadow-lg">
-                <i class="fa-solid fa-paper-plane"></i>
-            </button>
+            <div class="glass p-8 rounded-3xl text-center stat-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="text-5xl font-black text-purple-400 mb-2">12</div>
+                <div class="text-slate-400 uppercase tracking-widest text-xs">Sports Venues</div>
+            </div>
+        </section>
+    </div>
+
+    <div id="dashboardView" class="hidden-view">
+        <nav class="border-b border-slate-800 p-4 sticky top-0 z-40 glass">
+            <div class="max-w-6xl mx-auto flex justify-between items-center">
+                <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.reload()">
+                    <div class="bg-green-500 p-2 rounded-lg"><i class="fa-solid fa-bolt text-black"></i></div>
+                    <span class="text-xl font-black tracking-tighter uppercase italic text-green-400">ShowUp2Move</span>
+                </div>
+                <div class="text-xs bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
+                    <span class="w-2 h-2 bg-green-500 inline-block rounded-full mr-2"></span> System Online
+                </div>
+            </div>
+        </nav>
+
+        <main class="max-w-7xl mx-auto p-4 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div class="lg:col-span-4 space-y-6">
+                <section class="glass p-6 rounded-3xl shadow-xl" data-aos="fade-right">
+                    <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><i
+                            class="fa-solid fa-id-card text-green-400"></i> Register Profile</h2>
+                    <div class="space-y-4">
+                        <input id="name" type="text" placeholder="Your Full Name"
+                            class="w-full bg-slate-900 border border-slate-700 p-4 rounded-2xl focus:border-green-500 outline-none transition-all">
+                        <div class="relative">
+                            <textarea id="description" rows="3" placeholder="Tell the world who you are..."
+                                class="w-full bg-slate-900 border border-slate-700 p-4 rounded-2xl focus:border-green-500 outline-none transition-all"></textarea>
+                            <button onclick="magicAI()"
+                                class="absolute right-3 bottom-3 bg-green-500/20 text-green-400 p-2 rounded-lg hover:bg-green-500 hover:text-black transition"><i
+                                    class="fa-solid fa-wand-sparkles"></i></button>
+                        </div>
+                        <input id="sports" type="text" placeholder="Sports: football, tennis, yoga..."
+                            class="w-full bg-slate-900 border border-slate-700 p-4 rounded-2xl focus:border-green-500 outline-none transition-all">
+                        <button onclick="registerUser()"
+                            class="w-full bg-green-500 text-black font-black p-4 rounded-2xl hover:scale-105 transition shadow-lg shadow-green-500/20">CREATE
+                            ACCOUNT</button>
+                    </div>
+                </section>
+
+                <section class="glass p-6 rounded-3xl shadow-xl border-t-4 border-blue-500" data-aos="fade-right"
+                    data-aos-delay="200">
+                    <h2 class="text-xl font-bold mb-4 italic uppercase">ShowUpToday?</h2>
+                    <input id="userId" type="text" placeholder="Enter ID"
+                        class="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl mb-4 text-center font-mono text-blue-400">
+                    <div class="flex gap-4">
+                        <button onclick="setAvailability(true)"
+                            class="flex-1 bg-white text-black p-4 rounded-2xl font-black hover:bg-green-400 transition">YES</button>
+                        <button onclick="setAvailability(false)"
+                            class="flex-1 bg-slate-800 text-slate-400 p-4 rounded-2xl font-black hover:bg-red-500 hover:text-white transition">NO</button>
+                    </div>
+                </section>
+            </div>
+
+            <div class="lg:col-span-8 space-y-6">
+                <section class="glass p-8 rounded-3xl shadow-xl min-h-[600px]" data-aos="fade-left">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
+                        <h2 class="text-3xl font-black italic uppercase">Find Your Crew.</h2>
+                        <div class="flex bg-slate-900 p-2 rounded-2xl border border-slate-700 w-full md:w-auto">
+                            <input id="sportSearch" type="text" placeholder="Search sport..."
+                                class="bg-transparent px-4 outline-none text-sm">
+                            <button onclick="findMatch()"
+                                class="bg-green-500 text-black px-6 py-3 rounded-xl font-bold hover:bg-green-400 transition"><i
+                                    class="fa-solid fa-search"></i></button>
+                        </div>
+                    </div>
+
+                    <div id="results" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="col-span-full text-center py-20 opacity-30">
+                            <i class="fa-solid fa-users text-8xl mb-4"></i>
+                            <p class="text-xl italic">Search for a sport to reveal players...</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <button id="chatBtn"
+            class="fixed bottom-8 right-8 bg-white text-black p-5 rounded-3xl shadow-2xl z-50 hover:scale-110 active:scale-95 transition-all"><i
+                class="fa-solid fa-robot text-2xl"></i></button>
+
+        <div id="chatPopup"
+            class="fixed bottom-28 right-8 w-80 md:w-96 bg-slate-900 border border-slate-700 rounded-3xl shadow-2xl hidden z-50 overflow-hidden flex flex-col">
+            <div class="bg-green-500 p-4 flex justify-between items-center">
+                <span class="text-black font-black uppercase text-xs">AI Match Assistant</span>
+                <button id="closeChat" class="text-black font-bold">×</button>
+            </div>
+            <div id="chatDisplay" class="h-80 overflow-y-auto p-4 space-y-4 text-sm bg-slate-950/50"></div>
+            <div class="p-3 border-t border-slate-800 bg-slate-900 flex gap-2">
+                <input type="text" id="userInput" placeholder="Ask about sports..."
+                    class="flex-1 bg-slate-800 border-none rounded-xl px-4 py-2 text-sm text-white focus:ring-1 focus:ring-green-500 outline-none">
+                <button onclick="sendChat()" class="bg-green-500 text-black p-3 rounded-xl"><i
+                        class="fa-solid fa-paper-plane"></i></button>
+            </div>
         </div>
     </div>
 
-    <button id="chatBtn" class="fixed bottom-6 right-6 bg-green-500 hover:bg-green-400 text-slate-900 p-5 rounded-2xl shadow-2xl z-50 transition-all hover:scale-110 active:scale-95 shadow-green-500/20">
-        <i class="fa-solid fa-comment-dots text-2xl"></i>
-    </button>
+    <div id="toast"
+        class="fixed top-10 left-1/2 -translate-x-1/2 bg-white text-black px-8 py-4 rounded-2xl shadow-2xl font-black z-[100] hidden animate-bounce">
+        DONE! ✨</div>
 
-    <div id="toast" class="fixed top-20 right-6 glass border-green-500/50 p-4 rounded-2xl hidden z-[60] flex items-center gap-3 animate-bounce">
-        <div class="bg-green-500 p-2 rounded-full text-black"><i class="fa-solid fa-check"></i></div>
-        <div id="toastMsg" class="font-bold">Done!</div>
-    </div>
+    <script>
 
-  
+    </script>
 </body>
+
 </html>
