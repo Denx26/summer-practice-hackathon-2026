@@ -1,1 +1,21 @@
 @import "tailwindcss";
+
+
+body {
+    background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.8)),
+        url('https://images.unsplash.com/photo-1517649763962-0c623066013b?q=80&w=2070&auto=format&fit=crop');
+    background-size: cover;
+    background-attachment: fixed;
+    font-family: 'Inter', sans-serif;
+}
+
+.glass {
+    background: rgba(30, 41, 59, 0.4);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+.card-gradient {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(30, 41, 59, 0.4) 100%);
+}
