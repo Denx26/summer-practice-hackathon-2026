@@ -1,9 +1,14 @@
 const API = 'http://127.0.0.1:8001';
 let currentUser = null;
 
-function showToast(msg, color = '#00ff6a') {
+if (typeof AOS !== 'undefined') AOS.init({ duration: 800, once: true });
+
+function showToast(msg, color = '#22c55e') {
     const t = document.getElementById('toast');
-    t.textContent = msg; t.style.borderColor = color;
+    if (!t) return alert(msg);
+    t.textContent = msg;
+    t.style.borderColor = color;
+    t.style.color = color;
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 3000);
 }
@@ -14,6 +19,7 @@ function showPage(id) {
 }
 
 const selectedSports = new Set();
+
 document.querySelectorAll('.sport-chip').forEach(chip => {
     chip.addEventListener('click', () => {
         const s = chip.dataset.sport;
@@ -29,7 +35,9 @@ document.getElementById('reg-desc').addEventListener('input', (e) => {
     if (val.length < 15) return;
     
     bioTimer = setTimeout(async () => {
-        document.getElementById('ai-scanning').style.display = 'flex';
+        const scanningIcon = document.getElementById('ai-scanning');
+        if (scanningIcon) scanningIcon.style.display = 'flex';
+        
         try {
             const res = await fetch(`${API}/ai/extract-sports?description=${encodeURIComponent(val)}`, { method: 'POST' });
             const data = await res.json();
@@ -38,37 +46,52 @@ document.getElementById('reg-desc').addEventListener('input', (e) => {
                 document.querySelectorAll('.sport-chip').forEach(chip => {
                     const s = chip.dataset.sport;
                     if (found.some(f => f.includes(s) || s.includes(f))) {
-                        chip.classList.add('selected'); selectedSports.add(s);
+                        chip.classList.add('selected');
+                        selectedSports.add(s);
                     }
                 });
-                showToast(`🤖 AI added: ${data.sports}`);
+                showToast(`🤖 AI Found: ${data.sports}`);
             }
         } catch (e) {}
-        document.getElementById('ai-scanning').style.display = 'none';
-    }, 1000);
+        if (scanningIcon) scanningIcon.style.display = 'none';
+    }, 1500);
 });
 
 document.getElementById('btn-register').addEventListener('click', async () => {
     const name = document.getElementById('reg-name').value.trim();
     const desc = document.getElementById('reg-desc').value.trim();
-    if (!name || selectedSports.size === 0) return showToast('❌ Name and 1 Sport required!', '#ff4444');
+
+    if (!name) return showToast('❌ Please enter your name', '#ff4444');
+    if (selectedSports.size === 0) return showToast('❌ Select at least one sport', '#ff4444');
 
     const btn = document.getElementById('btn-register');
-    btn.disabled = true; btn.textContent = 'CREATING...';
+    btn.disabled = true;
+    btn.textContent = 'CREATING...';
 
     try {
         const res = await fetch(`${API}/users`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, description: desc || 'Ready to play', sports: Array.from(selectedSports), skill_level: "intermediate", available: 1 })
+            body: JSON.stringify({
+                name: name,
+                description: desc || 'Ready to play',
+                sports: Array.from(selectedSports),
+                skill_level: "intermediate",
+                available: 1
+            })
         });
+
         const data = await res.json();
-        currentUser = { id: data.id, name, desc };
+        currentUser = { id: data.id, name: name };
         localStorage.setItem('showup_user', JSON.stringify(currentUser));
         enterDashboard();
+        showToast('🎉 Welcome to ShowUp2Move!');
     } catch (e) {
         showToast('❌ Backend Offline!', '#ff4444');
-    } finally { btn.disabled = false; btn.textContent = 'START MATCHING NOW →'; }
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'START MATCHING NOW →';
+    }
 });
 
 function enterDashboard() {
@@ -76,16 +99,22 @@ function enterDashboard() {
     showPage('page-dashboard');
 }
 
-document.getElementById('btn-yes').addEventListener('click', () => updateAvail(true));
-document.getElementById('btn-no').addEventListener('click', () => updateAvail(false));
+document.getElementById('btn-yes').addEventListener('click', () => updateAvail(1));
+document.getElementById('btn-no').addEventListener('click', () => updateAvail(0));
 
 async function updateAvail(val) {
     const box = document.getElementById('avail-status-box');
     const btns = document.getElementById('showup-btns');
-    if (currentUser?.id) await fetch(`${API}/availability/${currentUser.id}?available=${val ? 1 : 0}`, { method: 'POST' });
-    box.textContent = val ? "✅ You're available today!" : "😴 Not today.";
-    box.className = 'avail-status ' + (val ? 'active' : 'inactive');
-    box.style.display = 'block'; btns.style.display = 'none';
+    
+    try {
+        if (currentUser?.id) {
+            await fetch(`${API}/availability/${currentUser.id}?available=${val}`, { method: 'POST' });
+        }
+    } catch (e) {}
+    
+    box.textContent = val ? '✅ You are IN today! Get ready.' : '😴 Not today. Resting.';
+    box.style.display = 'block';
+    btns.style.display = 'none';
 }
 
 document.getElementById('btn-search').addEventListener('click', doSearch);
@@ -93,38 +122,58 @@ document.getElementById('btn-search').addEventListener('click', doSearch);
 async function doSearch() {
     const sport = document.getElementById('sport-search').value.trim().toLowerCase();
     if (!sport) return;
+
     const container = document.getElementById('match-results');
-    
+    container.innerHTML = '<p class="text-slate-400 text-center">Searching...</p>';
+
     try {
         const res = await fetch(`${API}/match/${sport}`, { method: 'POST' });
         const players = await res.json();
-        if (!players.length) { container.innerHTML = `<p class="empty-state">No players found.</p>`; return; }
+
+        if (!players.length) {
+            container.innerHTML = `<div class="empty-state text-slate-500 text-center py-10">No available players for ${sport} right now.</div>`;
+            return;
+        }
 
         container.innerHTML = players.map(p => `
-            <div class="player-card">
-              <div class="player-info">
-                <div class="player-name">${p.name} <span class="event-badge">AVAILABLE</span></div>
-                <div class="player-sports">${p.sports}</div>
-                <button onclick="checkCompat('${p.name}', 'Player ready for ${p.sports}', this)" class="btn-green" style="font-size:0.7rem; padding:0.5rem; margin-top:0.5rem;">AI PREDICT MATCH</button>
-                <div class="compat-text" style="color:var(--green); font-size:0.75rem; margin-top:0.5rem;"></div>
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl mb-4 hover:border-green-500 transition">
+              <div class="flex justify-between">
+                <div class="font-bold text-lg text-white">${p.name}</div>
+                <div class="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 rounded font-bold uppercase">AVAILABLE</div>
               </div>
+              <div class="text-xs text-green-400 mb-4 font-bold uppercase">${p.sports}</div>
+              
+              <button onclick="checkCompat('${p.name}', '${p.description || ''}', this)" class="w-full bg-slate-800 text-white font-bold py-2 rounded-lg text-xs hover:bg-green-500 hover:text-black transition">
+                <i class="fa-solid fa-wand-sparkles mr-1"></i> AI PREDICT MATCH
+              </button>
+              <div class="compat-text mt-3 text-xs text-green-300 italic hidden"></div>
             </div>
         `).join('');
-    } catch (e) { container.innerHTML = `<p class="empty-state" style="color:red">Backend Error</p>`; }
+    } catch (e) {
+        container.innerHTML = `<p class="text-red-500 text-center">Backend connection failed.</p>`;
+    }
 }
 
 async function checkCompat(targetName, targetDesc, btn) {
+    if (!currentUser?.id) return showToast("Register first to use AI!", "red");
+    
     const infoDiv = btn.nextElementSibling;
     btn.textContent = "ANALYZING...";
+    
     try {
         const res = await fetch(`${API}/ai/compatibility`, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ user_id: currentUser.id, target_name: targetName, target_desc: targetDesc })
         });
         const data = await res.json();
         infoDiv.textContent = data.analysis;
-        btn.style.display = 'none'; 
-    } catch (e) { infoDiv.textContent = "Error calculating."; }
+        infoDiv.classList.remove('hidden');
+        btn.style.display = 'none';
+    } catch (e) {
+        infoDiv.textContent = "AI Analysis unavailable.";
+        infoDiv.classList.remove('hidden');
+    }
 }
 
 document.getElementById('chat-fab').addEventListener('click', () => document.getElementById('chat-panel').classList.toggle('open'));
@@ -136,21 +185,44 @@ async function sendChat() {
     const msg = input.value.trim();
     if (!msg) return;
     input.value = '';
+
     const msgs = document.getElementById('chat-messages');
     msgs.innerHTML += `<div class="msg user">${msg}</div>`;
-    
-    const res = await fetch(`${API}/chat`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: msg })
-    });
-    const data = await res.json();
-    msgs.innerHTML += `<div class="msg ai">${data.reply}</div>`;
+    msgs.scrollTop = msgs.scrollHeight;
+
+    try {
+        const res = await fetch(`${API}/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: msg })
+        });
+        const data = await res.json();
+        msgs.innerHTML += `<div class="msg ai">${data.reply}</div>`;
+    } catch (e) {
+        msgs.innerHTML += `<div class="msg ai">I am offline right now.</div>`;
+    }
     msgs.scrollTop = msgs.scrollHeight;
 }
 
-// On Load
 window.addEventListener('load', () => {
     const saved = localStorage.getItem('showup_user');
-    if (saved) { currentUser = JSON.parse(saved); enterDashboard(); }
+    if (saved) {
+        try {
+            currentUser = JSON.parse(saved);
+            enterDashboard();
+        } catch (e) { localStorage.removeItem('showup_user'); }
+    }
 });
-document.getElementById('btn-logout').addEventListener('click', () => { localStorage.clear(); location.reload(); });
+
+document.getElementById('btn-logout').addEventListener('click', () => {
+    localStorage.removeItem('showup_user');
+    location.reload();
+});
+
+document.addEventListener('keydown', async (e) => {
+    if (e.ctrlKey && e.key === 'r') {
+        e.preventDefault();
+        const res = await fetch(`${API}/debug/reset`, {method: 'POST'});
+        if(res.ok) { localStorage.clear(); alert("DB SEEDED"); location.reload(); }
+    }
+});
