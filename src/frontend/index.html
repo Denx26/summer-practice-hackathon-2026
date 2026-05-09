@@ -3,69 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShowUp2Move</title>
+    <title>ShowUp2Move | Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 10px; }
+    </style>
 </head>
-<body class="bg-gray-900 text-white min-h-screen p-8">
+<body class="bg-slate-900 text-slate-100 font-sans selection:bg-green-500/30">
 
-    <h1 class="text-4xl font-bold text-center text-green-400 mb-8">ShowUp2Move</h1>
+    <nav class="border-b border-slate-800 p-4 sticky top-0 z-40 glass">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="bg-green-500 p-2 rounded-lg"><i class="fa-solid fa-bolt text-black"></i></div>
+                <span class="text-xl font-black tracking-tighter uppercase italic text-green-400">ShowUp2Move</span>
+            </div>
+            <div id="connectionStatus" class="text-xs bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
+                <span class="w-2 h-2 bg-green-500 inline-block rounded-full mr-2"></span> Backend Connected
+            </div>
+        </div>
+    </nav>
 
-    <!-- Register -->
-    <div class="max-w-md mx-auto bg-gray-800 p-6 rounded-xl mb-6">
-        <h2 class="text-xl font-bold mb-4">Join & Play</h2>
-        <input id="name" placeholder="Your name" class="w-full p-2 mb-3 rounded bg-gray-700">
-        <input id="description" placeholder="Describe yourself" class="w-full p-2 mb-3 rounded bg-gray-700">
-        <input id="sports" placeholder="Sports (football,tennis)" class="w-full p-2 mb-3 rounded bg-gray-700">
-        <button onclick="registerUser()" class="w-full bg-green-500 hover:bg-green-600 p-2 rounded font-bold">Register</button>
-    </div>
+    <main class="max-w-6xl mx-auto p-4 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <div class="lg:col-span-4 space-y-6" data-aos="fade-right">
+            <section class="glass p-6 rounded-3xl shadow-xl">
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-user-plus text-green-400"></i> Join the Movement
+                </h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-xs text-slate-400 uppercase font-bold px-1">Full Name</label>
+                        <input id="name" type="text" placeholder="Denis Gabor" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl focus:border-green-500 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 uppercase font-bold px-1">Bio / Description</label>
+                        <textarea id="description" rows="2" placeholder="Tell us about yourself..." class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl focus:border-green-500 outline-none transition-all"></textarea>
+                    </div>
+                    <div class="relative">
+                        <label class="text-xs text-slate-400 uppercase font-bold px-1">Sports Preferences</label>
+                        <input id="sports" type="text" placeholder="football, tennis, gym" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl focus:border-green-500 outline-none transition-all pr-12">
+                        <button onclick="magicAI()" title="Magic AI Extraction" class="absolute right-2 top-8 text-green-400 hover:text-white p-2 transition-colors">
+                            <i class="fa-solid fa-wand-sparkles animate-pulse"></i>
+                        </button>
+                    </div>
+                    <button onclick="registerUser()" class="w-full bg-green-500 hover:bg-green-400 text-slate-950 font-black p-4 rounded-xl transition-all hover:scale-[1.02] active:scale-95 shadow-lg shadow-green-500/20">
+                        CREATE PROFILE
+                    </button>
+                </div>
+            </section>
 
-    <!-- ShowUpToday -->
-    <div class="max-w-md mx-auto bg-gray-800 p-6 rounded-xl mb-6">
-        <h2 class="text-xl font-bold mb-4">ShowUpToday?</h2>
-        <input id="userId" placeholder="Your user ID" class="w-full p-2 mb-3 rounded bg-gray-700">
-        <div class="flex gap-3">
-            <button onclick="setAvailability(true)" class="flex-1 bg-green-500 p-2 rounded font-bold hover:bg-green-600">Yes, I'm in!</button>
-            <button onclick="setAvailability(false)" class="flex-1 bg-red-500 p-2 rounded font-bold hover:bg-red-600">Not today</button>
+            <section class="glass p-6 rounded-3xl shadow-xl border-l-4 border-green-500">
+                <div class="flex justify-between items-start mb-4">
+                    <h2 class="text-lg font-bold italic uppercase">ShowUpToday?</h2>
+                    <span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 rounded font-bold uppercase tracking-widest">LIVE STATUS</span>
+                </div>
+                <input id="userId" type="text" placeholder="Enter your ID" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-xl mb-4 text-center font-mono text-green-400">
+                <div class="flex gap-3">
+                    <button onclick="setAvailability(true)" class="flex-1 bg-slate-100 text-slate-900 font-bold p-3 rounded-xl hover:bg-green-400 transition-all active:scale-90 flex flex-col items-center">
+                        <i class="fa-solid fa-check mb-1"></i> I'm In
+                    </button>
+                    <button onclick="setAvailability(false)" class="flex-1 bg-slate-800 text-slate-400 font-bold p-3 rounded-xl hover:bg-red-500 hover:text-white transition-all active:scale-90 flex flex-col items-center">
+                        <i class="fa-solid fa-xmark mb-1"></i> Not Now
+                    </button>
+                </div>
+            </section>
+        </div>
+
+        <div class="lg:col-span-8 space-y-6" data-aos="fade-left">
+            <section class="glass p-8 rounded-3xl shadow-xl min-h-[500px]">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                    <div>
+                        <h2 class="text-2xl font-black italic">DISCOVER PLAYERS</h2>
+                        <p class="text-slate-400 text-sm">Find compatible groups based on your sports</p>
+                    </div>
+                    <div class="flex gap-2 bg-slate-900 p-1 rounded-2xl border border-slate-700">
+                        <input id="sportSearch" type="text" placeholder="Search sport..." class="bg-transparent px-4 py-2 outline-none w-full md:w-48 text-sm">
+                        <button onclick="findMatch()" class="bg-green-500 text-slate-950 px-6 py-2 rounded-xl font-bold hover:bg-green-400 transition-all">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="results" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="col-span-full flex flex-col items-center justify-center py-20 text-slate-600">
+                        <i class="fa-solid fa-people-group text-6xl mb-4 opacity-20"></i>
+                        <p>Search for a sport to see who's ready to move!</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div id="chatPopup" class="fixed bottom-24 right-6 w-80 md:w-96 bg-slate-800 border border-slate-700 rounded-3xl shadow-2xl hidden z-50 overflow-hidden flex flex-col transform transition-all duration-300 scale-90">
+        <div class="bg-green-500 p-4 font-black text-slate-900 flex justify-between items-center italic">
+            <span><i class="fa-solid fa-robot mr-2"></i> DENIS AI ASSISTANT</span>
+            <button id="closeChat" class="text-slate-950 hover:opacity-50 text-2xl">×</button>
+        </div>
+        <div id="chatDisplay" class="h-80 overflow-y-auto p-4 space-y-4 text-sm bg-slate-900/50">
+            <div class="bg-slate-800 p-3 rounded-2xl rounded-tl-none border border-slate-700 text-slate-300">
+                Salut, Denis! Sunt gata să te ajut să găsești cel mai bun grup de sport. Întreabă-mă orice!
+            </div>
+        </div>
+        <div class="p-3 border-t border-slate-800 bg-slate-800 flex gap-2">
+            <input type="text" id="userInput" placeholder="Ask anything..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-green-500">
+            <button onclick="sendChat()" class="bg-green-500 text-slate-950 p-3 rounded-xl hover:bg-green-400 transition shadow-lg">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
         </div>
     </div>
 
-    <!-- Find Match -->
-    <div class="max-w-md mx-auto bg-gray-800 p-6 rounded-xl mb-6">
-        <h2 class="text-xl font-bold mb-4">Find Players</h2>
-        <input id="sportSearch" placeholder="Sport (e.g. football)" class="w-full p-2 mb-3 rounded bg-gray-700">
-        <button onclick="findMatch()" class="w-full bg-blue-500 hover:bg-blue-600 p-2 rounded font-bold">Find Match</button>
-        <div id="results" class="mt-4"></div>
+    <button id="chatBtn" class="fixed bottom-6 right-6 bg-green-500 hover:bg-green-400 text-slate-900 p-5 rounded-2xl shadow-2xl z-50 transition-all hover:scale-110 active:scale-95 shadow-green-500/20">
+        <i class="fa-solid fa-comment-dots text-2xl"></i>
+    </button>
+
+    <div id="toast" class="fixed top-20 right-6 glass border-green-500/50 p-4 rounded-2xl hidden z-[60] flex items-center gap-3 animate-bounce">
+        <div class="bg-green-500 p-2 rounded-full text-black"><i class="fa-solid fa-check"></i></div>
+        <div id="toastMsg" class="font-bold">Done!</div>
     </div>
 
-<script>
-const API = "http://127.0.0.1:8001";
+    <script>
+        const API = "http://127.0.0.1:8001";
+        AOS.init({duration: 800, once: true});
 
-async function registerUser() {
-    const name = document.getElementById("name").value;
-    const description = document.getElementById("description").value;
-    const sports = document.getElementById("sports").value.split(",");
-    const res = await fetch(`${API}/users`, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({name, description, sports, skill_level: "intermediate"})
-    });
-    const data = await res.json();
-    alert(`Registered! Your ID is: ${data.id}`);
-}
+        // Toggle Chat
+        const chatBtn = document.getElementById('chatBtn');
+        const chatPopup = document.getElementById('chatPopup');
+        const closeChat = document.getElementById('closeChat');
+        chatBtn.onclick = () => chatPopup.classList.toggle('hidden');
+        closeChat.onclick = () => chatPopup.classList.add('hidden');
 
-async function setAvailability(available) {
-    const userId = document.getElementById("userId").value;
-    await fetch(`${API}/availability/${userId}?available=${available}`, {method: "POST"});
-    alert(available ? "You're in for today!" : "Maybe next time!");
-}
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
+        }
 
-async function findMatch() {
-    const sport = document.getElementById("sportSearch").value;
-    const res = await fetch(`${API}/match/${sport}`, {method: "POST"});
-    const users = await res.json();
-    const div = document.getElementById("results");
-    div.innerHTML = users.length ? users.map(u => `<div class="bg-gray-700 p-3 rounded mb-2">${u.name} - ${u.sports}</div>`).join("") : "<p>No players found</p>";
-}
-</script>
+        async function registerUser() {
+            const name = document.getElementById("name").value;
+            const description = document.getElementById("description").value;
+            const sports = document.getElementById("sports").value.split(",").map(s => s.trim());
+            
+            const res = await fetch(`${API}/users`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, description, sports, skill_level: "intermediate", available: 0 })
+            });
+            const data = await res.json();
+            showToast("Registered! ID: " + data.id);
+            document.getElementById("userId").value = data.id;
+        }
+
+        async function setAvailability(available) {
+            const userId = document.getElementById("userId").value;
+            if(!userId) return showToast("Please enter ID first!");
+            await fetch(`${API}/availability/${userId}?available=${available ? 1 : 0}`, { method: "POST" });
+            showToast(available ? "You're in for today!" : "Status updated!");
+        }
+
+        async function findMatch() {
+            const sport = document.getElementById("sportSearch").value;
+            const res = await fetch(`${API}/match/${sport}`, { method: "POST" });
+            const users = await res.json();
+            const div = document.getElementById("results");
+            
+            if (users.length === 0) {
+                div.innerHTML = `<div class="col-span-full text-center p-10 glass rounded-2xl text-slate-500 italic">No players found for ${sport} yet.</div>`;
+                return;
+            }
+
+            div.innerHTML = users.map(u => `
+                <div class="glass p-5 rounded-2xl hover:border-green-500 transition-all group" data-aos="zoom-in">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center border border-slate-700">
+                            <i class="fa-solid fa-user text-slate-500"></i>
+                        </div>
+                        <span class="text-[10px] bg-slate-800 px-2 py-1 rounded-full text-slate-400 font-bold uppercase">MATCH 95%</span>
+                    </div>
+                    <h3 class="font-black text-lg text-slate-100">${u.name}</h3>
+                    <p class="text-xs text-slate-400 mb-3 line-clamp-2">${u.description || 'No description provided.'}</p>
+                    <div class="flex flex-wrap gap-2">
+                        ${u.sports.split(',').map(s => `<span class="text-[9px] bg-green-500/10 text-green-400 border border-green-500/30 px-2 py-0.5 rounded-md font-bold uppercase">${s}</span>`).join('')}
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        // --- AI ASSISTANT LOGIC ---
+        async function sendChat() {
+            const input = document.getElementById("userInput");
+            const box = document.getElementById("chatDisplay");
+            const message = input.value;
+            if (!message) return;
+
+            box.innerHTML += `<div class="bg-green-500 text-slate-900 p-3 rounded-2xl rounded-tr-none self-end ml-10 text-right font-bold">${message}</div>`;
+            input.value = "";
+            box.scrollTop = box.scrollHeight;
+
+            const res = await fetch(`${API}/chat`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: message })
+            });
+            const data = await res.json();
+            
+            box.innerHTML += `<div class="bg-slate-800 p-3 rounded-2xl rounded-tl-none border border-slate-700 text-slate-300 self-start mr-10">${data.reply}</div>`;
+            box.scrollTop = box.scrollHeight;
+        }
+
+        // --- MAGIC AI BONUS (500 points) ---
+        async function magicAI() {
+            const desc = document.getElementById("description").value;
+            if(!desc) return showToast("Write a description first!");
+            showToast("AI analyzing description...");
+            
+            // Reutilizăm asistentul AI ca să extragă sporturile
+            const res = await fetch(`${API}/chat`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: `Extrage doar numele sporturilor (separate prin virgulă) din acest text: "${desc}". Răspunde doar cu lista de sporturi, nimic altceva.` })
+            });
+            const data = await res.json();
+            document.getElementById("sports").value = data.reply.replace(/\./g, '');
+            showToast("Magic! Sports updated.");
+        }
+
+        document.getElementById("userInput").addEventListener("keypress", (e) => { if (e.key === "Enter") sendChat(); });
+    </script>
 </body>
 </html>
